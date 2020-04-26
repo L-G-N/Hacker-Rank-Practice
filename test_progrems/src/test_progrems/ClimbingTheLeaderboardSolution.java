@@ -22,31 +22,79 @@ public class ClimbingTheLeaderboardSolution {
 	}
 	
 	 static int[] climbingLeaderboard(int[] scores, int[] alice) {
-	        int[] aliceRank = new int[alice.length];
+		 int n = scores.length;
+			int m = alice.length;
 
-	        List<Integer> scoreRank = new ArrayList<>();
-	        
-	        for(int i=0; i<scores.length; i++){
-	            if(!scoreRank.contains(scores[i])){
-	                scoreRank.add(scores[i]);
-	            }
-	        }
-	        
-	        for(int i=0; i<alice.length; i++){
-	            int rank = 0;
-	            for(int j=0; j<scoreRank.size(); j++){
-	                if(scoreRank.get(j) <= alice[i]){
-	                    rank = j+1;
-	                    break;
-	                }
-	            }
-	            if(rank == 0){
-	                rank = scoreRank.size() + 1;
-	            }
-	            aliceRank[i] = rank;
-	        }
+			int res[] = new int[m];
+			int[] rank = new int[n];
 
-	        return aliceRank;
-	    }
+			rank[0] = 1;
+
+			for (int i = 1; i < n; i++) {
+				if (scores[i] == scores[i - 1]) {
+					rank[i] = rank[i - 1];
+				} else {
+					rank[i] = rank[i - 1] + 1;
+				}
+			}
+
+			for (int i = 0; i < m; i++) {
+				int aliceScore = alice[i];
+				if (aliceScore > scores[0]) {
+					res[i] = 1;
+				} else if (aliceScore < scores[n - 1]) {
+					res[i] = rank[n - 1] + 1;
+				} else {
+					int index = binarySearch(scores, aliceScore);
+					res[i] = rank[index];
+
+				}
+			}
+			return res;
+
+		}
+
+		private static int binarySearch(int[] a, int key) {
+
+			int lo = 0;
+			int hi = a.length - 1;
+
+			while (lo <= hi) {
+				int mid = lo + (hi - lo) / 2;
+				if (a[mid] == key) {
+					return mid;
+				} else if (a[mid] < key && key < a[mid - 1]) {
+					return mid;
+				} else if (a[mid] > key && key >= a[mid + 1]) {
+					return mid + 1;
+				} else if (a[mid] < key) {
+					hi = mid - 1;
+				} else if (a[mid] > key) {
+					lo = mid + 1;
+				}
+			}
+			return -1;
+		}
+	   
+//	   public static int binarySearchCopied(List<Integer> a, int key){
+//		   int lo = 0;
+//			int hi = a.size() - 1;
+//
+//			while (lo <= hi) {
+//				int mid = lo + (hi - lo) / 2;
+//				if (a.get(mid) == key) {
+//					return mid;
+//				} else if (a.get(mid) < key && key < a.get(mid-1)) {
+//					return mid;
+//				} else if (a.get(mid) > key && key >= a.get(mid+1)) {
+//					return mid + 1;
+//				} else if (a.get(mid) < key) {
+//					hi = mid - 1;
+//				} else if (a.get(mid) > key) {
+//					lo = mid + 1;
+//				}
+//			}
+//			return -1;
+//	   }
 
 }
